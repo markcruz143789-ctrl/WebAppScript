@@ -1,25 +1,101 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <base target="_top">
-  </head>
-  <body>
-   <button id="saveBtn">Save Data</button>
-<script>
-  const scriptURL = "https://script.google.com/macros/s/AKfycbxCSBzb9XunHrkRmqA-pCdBhZo3P8f_sGM7wJKoZaojF_qsNIEz_GW_A683fekaqh9i/exec"; // paste your Web App URL here
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google Sheet Saver</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .card {
+      background: #fff;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+      width: 350px;
+      text-align: center;
+    }
+    h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+    input {
+      width: 90%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background: #4285f4;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #3367d6;
+    }
+    #result {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Save to Google Sheet</h2>
+    <input type="text" id="name" placeholder="Enter name" required>
+    <input type="number" id="score" placeholder="Enter score" required>
+    <button id="saveBtn">Save Data</button>
+    <p id="result"></p>
+  </div>
 
-  document.getElementById("saveBtn").addEventListener("click", () => {
-    const payload = { name: "John Doe", score: 95 };
+  <script>
+    const scriptURL = "https://script.google.com/macros/s/AKfycbxCSBzb9XunHrkRmqA-pCdBhZo3P8f_sGM7wJKoZaojF_qsNIEz_GW_A683fekaqh9i/exec";
 
-    fetch(scriptURL, {
-      method: "POST",
-      body: JSON.stringify(payload)
-    })
-    .then(res => res.text())
-    .then(msg => alert(msg))
-    .catch(err => console.error("Error:", err));
-  });
-</script>
- 
-  </body>
+    document.getElementById("saveBtn").addEventListener("click", () => {
+      const name = document.getElementById("name").value.trim();
+      const score = document.getElementById("score").value.trim();
+      const result = document.getElementById("result");
+
+      if (!name || !score) {
+        result.textContent = "⚠️ Please fill in all fields.";
+        result.style.color = "red";
+        return;
+      }
+
+      const payload = { name, score };
+
+      fetch(scriptURL, {
+        method: "POST",
+        body: JSON.stringify(payload)  // ✅ same as your working version
+      })
+      .then(res => res.text())        // ✅ keep plain text response
+      .then(msg => {
+        result.textContent = msg;
+        result.style.color = "green";
+        document.getElementById("name").value = "";
+        document.getElementById("score").value = "";
+      })
+      .catch(err => {
+        console.error("Error:", err);
+        result.textContent = "❌ Failed to save data.";
+        result.style.color = "red";
+      });
+    });
+  </script>
+</body>
 </html>
